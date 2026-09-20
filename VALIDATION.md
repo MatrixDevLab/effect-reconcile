@@ -8,9 +8,13 @@ The first release is evidence-led rather than benchmark-led.
 4. Malformed, stale, conflicting, and unsupported evidence must never produce a retry-safe result.
 5. The repository must pass compilation, unit tests, and `git diff --check`.
 
+The current fixture run covers nine cases and is serialized without operation
+identities or request keys. The core's `retry_permitted` flag is true only for
+`retry_safe`; `confirmed_absent` is an observation result, not an execution
+instruction.
+
 The validation result must distinguish:
 
 - **verified** — the pure function returned the pre-declared result;
 - **unknown** — the fixture does not establish provider behavior;
 - **out of scope** — transport execution and external readback are deliberately not tested here.
-

@@ -19,7 +19,38 @@ The library will not execute requests, invent receipts, or silently change an id
 
 ## Status
 
-Research-backed repository scaffold. The first implementation will remain dependency-free and local, with deterministic fixtures for timeout, lost-acknowledgement, duplicate, stale, and conflicting readback cases.
+The bounded dependency-free core is implemented. It accepts an operation
+identity, attempt evidence, and an optional readback, then returns a typed
+decision without performing I/O or authorizing a retry.
+
+```python
+from effect_reconcile import (
+    AttemptEvidence, AttemptPhase, MutationBoundary, OperationIdentity,
+    decide,
+)
+
+decision = decide(
+    OperationIdentity("operation-42", "request-key-42"),
+    AttemptEvidence(
+        AttemptPhase.SUBMITTED,
+        MutationBoundary.MAY_HAVE_CROSSED,
+        "operation-42",
+        "request-key-42",
+    ),
+)
+assert decision.disposition.value == "reconcile_required"
+assert not decision.retry_permitted
+```
+
+`retry_safe` is returned only when the evidence explicitly establishes that
+the mutation boundary was not reached. Current authoritative readback settles
+as `confirmed_applied` or `confirmed_absent`; neither silently permits a new
+execution. Stale, conflicting, unsupported, malformed, or mismatched evidence
+returns `blocked`.
+
+The fixture corpus in `fixtures/cases.json` covers pre-mutation rejection,
+timeouts, lost acknowledgement, authoritative readback, stale/conflicting
+readback, unsupported evidence, and identity mismatch.
 
 ## Evidence
 
@@ -29,4 +60,3 @@ Research-backed repository scaffold. The first implementation will remain depend
 ## Non-goals
 
 No HTTP client, provider adapter, credential handling, queue, database, or automatic retry loop in the first release.
-
