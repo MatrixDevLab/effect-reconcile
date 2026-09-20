@@ -2,10 +2,10 @@
 
 ## Phase 0 — bounded core
 
-- [ ] Define the operation/attempt/readback vocabulary.
-- [ ] Implement a pure decision function with typed outcomes.
-- [ ] Add deterministic fixtures for safe, ambiguous, confirmed, stale, and conflict cases.
-- [ ] Document what the core cannot know.
+- [x] Define the operation/attempt/readback vocabulary.
+- [x] Implement a pure decision function with typed outcomes.
+- [x] Add deterministic fixtures for safe, ambiguous, confirmed, stale, and conflict cases.
+- [x] Document what the core cannot know.
 
 ## Phase 1 — usable artifact
 
@@ -15,5 +15,4 @@
 
 ## Stop / ship decision
 
-Ship the bounded core if the fixtures demonstrate the ambiguity boundary clearly and the API is useful without a provider integration. Stop if the result requires a queue, database, transport client, or hidden policy engine to be meaningful.
-
+Ship the bounded core if the fixtures demonstrate the ambiguity boundary clearly and the API is useful without a provider integration. Stop if the result requires a queue, database, transport client, or hidden policy engine to be meaningful. The current implementation reaches this stopping point; Phase 1 requires separate consumer evidence.

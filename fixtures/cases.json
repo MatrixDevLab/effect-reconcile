@@ -1,0 +1,154 @@
+[
+  {
+    "name": "rejected-before-mutation",
+    "input": {
+      "operation": {"operation_id": "op-001", "request_key": "key-001"},
+      "attempt": {
+        "phase": "rejected",
+        "mutation_boundary": "not_reached",
+        "operation_id": "op-001",
+        "request_key": "key-001"
+      }
+    },
+    "expected": {"disposition": "retry_safe", "reason_code": "mutation_impossible"}
+  },
+  {
+    "name": "timeout-after-submit",
+    "input": {
+      "operation": {"operation_id": "op-002", "request_key": "key-002"},
+      "attempt": {
+        "phase": "submitted",
+        "mutation_boundary": "may_have_crossed",
+        "operation_id": "op-002",
+        "request_key": "key-002"
+      }
+    },
+    "expected": {"disposition": "reconcile_required", "reason_code": "mutation_possibly_reached"}
+  },
+  {
+    "name": "lost-acknowledgement",
+    "input": {
+      "operation": {"operation_id": "op-003", "request_key": "key-003"},
+      "attempt": {
+        "phase": "acknowledged",
+        "mutation_boundary": "crossed",
+        "operation_id": "op-003",
+        "request_key": "key-003"
+      }
+    },
+    "expected": {"disposition": "reconcile_required", "reason_code": "mutation_possibly_reached"}
+  },
+  {
+    "name": "authoritative-applied-readback",
+    "input": {
+      "operation": {"operation_id": "op-004", "request_key": "key-004"},
+      "attempt": {
+        "phase": "unknown",
+        "mutation_boundary": "may_have_crossed",
+        "operation_id": "op-004",
+        "request_key": "key-004"
+      },
+      "readback": {
+        "status": "applied",
+        "authority": "authoritative",
+        "freshness": "current",
+        "operation_id": "op-004",
+        "request_key": "key-004"
+      }
+    },
+    "expected": {"disposition": "confirmed_applied", "reason_code": "authoritative_current_applied"}
+  },
+  {
+    "name": "authoritative-absent-readback",
+    "input": {
+      "operation": {"operation_id": "op-005", "request_key": "key-005"},
+      "attempt": {
+        "phase": "submitted",
+        "mutation_boundary": "may_have_crossed",
+        "operation_id": "op-005",
+        "request_key": "key-005"
+      },
+      "readback": {
+        "status": "absent",
+        "authority": "authoritative",
+        "freshness": "current",
+        "operation_id": "op-005",
+        "request_key": "key-005"
+      }
+    },
+    "expected": {"disposition": "confirmed_absent", "reason_code": "authoritative_current_absent"}
+  },
+  {
+    "name": "stale-readback",
+    "input": {
+      "operation": {"operation_id": "op-006", "request_key": "key-006"},
+      "attempt": {
+        "phase": "submitted",
+        "mutation_boundary": "may_have_crossed",
+        "operation_id": "op-006",
+        "request_key": "key-006"
+      },
+      "readback": {
+        "status": "absent",
+        "authority": "authoritative",
+        "freshness": "stale",
+        "operation_id": "op-006",
+        "request_key": "key-006"
+      }
+    },
+    "expected": {"disposition": "blocked", "reason_code": "stale_or_unknown_readback"}
+  },
+  {
+    "name": "conflicting-readback",
+    "input": {
+      "operation": {"operation_id": "op-007", "request_key": "key-007"},
+      "attempt": {
+        "phase": "submitted",
+        "mutation_boundary": "may_have_crossed",
+        "operation_id": "op-007",
+        "request_key": "key-007"
+      },
+      "readback": {
+        "status": "conflicting",
+        "authority": "authoritative",
+        "freshness": "current",
+        "operation_id": "op-007",
+        "request_key": "key-007"
+      }
+    },
+    "expected": {"disposition": "blocked", "reason_code": "conflicting_readback"}
+  },
+  {
+    "name": "identity-mismatch",
+    "input": {
+      "operation": {"operation_id": "op-008", "request_key": "key-008"},
+      "attempt": {
+        "phase": "submitted",
+        "mutation_boundary": "may_have_crossed",
+        "operation_id": "op-008",
+        "request_key": "different-key"
+      }
+    },
+    "expected": {"disposition": "blocked", "reason_code": "attempt_identity_mismatch"}
+  },
+  {
+    "name": "unsupported-readback",
+    "input": {
+      "operation": {"operation_id": "op-009", "request_key": "key-009"},
+      "attempt": {
+        "phase": "submitted",
+        "mutation_boundary": "may_have_crossed",
+        "operation_id": "op-009",
+        "request_key": "key-009"
+      },
+      "readback": {
+        "status": "unsupported",
+        "authority": "authoritative",
+        "freshness": "current",
+        "operation_id": "op-009",
+        "request_key": "key-009"
+      }
+    },
+    "expected": {"disposition": "blocked", "reason_code": "unsupported_readback"}
+  }
+]
